@@ -7,7 +7,7 @@ import com.lemees.fxgrid.Systems.CoordinateSystem;
 
 import java.util.*;
 
-public class BountyCharacter extends CustomCharacter{
+public abstract class BountyCharacter extends CustomCharacter{
     private Queue<Coordinate> path;
     private CustomCharacter target;
 

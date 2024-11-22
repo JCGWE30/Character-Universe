@@ -9,6 +9,10 @@ import com.lemees.fxgrid.Systems.CoordinateSystem;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -28,6 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HelloApplication extends Application {
+    public static IntegerProperty gameSpeed;
     @Override
     public void start(Stage stage) throws IOException {
         // Load the FXML file
@@ -70,11 +75,34 @@ public class HelloApplication extends Application {
 
                     controller.updateEvents();
                     controller.updateDropdowns();
+                    CharacterSystem.checkForVictory(controller);
                 })
         );
 
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+
+        gameSpeed=new SimpleIntegerProperty(1);
+
+        gameSpeed.addListener((observableValue, number, t1) -> {
+            timeline.getKeyFrames().clear();
+            timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1.0/t1.intValue()),e->{
+
+                controller.deleteAllTiles();
+
+                for(CustomCharacter c:CharacterSystem.getLivingCharacters()){
+                    c.turnTick();
+                }
+                for(CustomCharacter c:CharacterSystem.getLivingCharacters()){
+                    controller.spawnCharacter(c);
+                }
+
+                controller.updateEvents();
+                controller.updateDropdowns();
+                CharacterSystem.checkForVictory(controller);
+            }));
+            timeline.playFromStart();
+        });
 
 
         // Set up the scene and stage

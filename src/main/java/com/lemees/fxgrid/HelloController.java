@@ -2,10 +2,13 @@ package com.lemees.fxgrid;
 
 import com.lemees.fxgrid.Characters.CustomCharacter;
 import com.lemees.fxgrid.Systems.CharacterSystem;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -37,12 +40,55 @@ public class HelloController {
     private VBox creatureScroll;
     @FXML
     private VBox eventScroll;
+    @FXML
+    private ScrollPane eventScrollPane;
+
+    @FXML
+    private Button pauseButton;
+    @FXML
+    private Button slowButton;
+    @FXML
+    private Button fastButton;
+    @FXML
+    private Label speedDisplay;
 
     private double cellWidth;
     private double cellHeight;
+
+    private int actualSpeed = 1;
+    private boolean isPaused = false;
+
     private Map<Coordinate, Node> cellValues = new ConcurrentHashMap<>();
 
+    private void updateSpeed(int speed,boolean paused){
+        if(paused){
+            if(isPaused){
+                pauseButton.setText("Pause");
+                HelloApplication.gameSpeed.set(actualSpeed);
+            }else{
+                pauseButton.setText("Play");
+                HelloApplication.gameSpeed.set(0);
+            }
+            isPaused=!isPaused;
+            return;
+        }
+        actualSpeed+=speed;
+        actualSpeed = Math.max(1,Math.min(actualSpeed,5));
+        HelloApplication.gameSpeed.set(actualSpeed);
+        speedDisplay.setText("x"+actualSpeed);
+    }
+
     public void setGridSize(int size) {
+        pauseButton.setOnAction(_ -> {
+            updateSpeed(0,true);
+        });
+        slowButton.setOnAction(_ -> {
+            updateSpeed(-1,false);
+        });
+        fastButton.setOnAction(_ -> {
+            updateSpeed(1,false);
+        });
+
         instance = this;
 
         mapSize = size;
@@ -183,6 +229,7 @@ public class HelloController {
             label.setText(st);
             eventScroll.getChildren().add(label);
         }
+        eventScrollPane.setVvalue(1.0);
     }
 
     public void updateDropdowns(){

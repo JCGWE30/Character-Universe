@@ -7,7 +7,7 @@ import com.lemees.fxgrid.Systems.CoordinateSystem;
 import java.util.Arrays;
 import java.util.Random;
 
-public class RandomWalkCharacter extends CustomCharacter{
+public abstract class RandomWalkCharacter extends CustomCharacter{
     public RandomWalkCharacter(String name, String imagePath) {
         super(name, imagePath);
     }

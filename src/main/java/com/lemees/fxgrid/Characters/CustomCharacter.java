@@ -6,8 +6,10 @@ import com.lemees.fxgrid.Systems.CharacterSystem;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 
+import java.util.List;
 
-public class CustomCharacter {
+
+public abstract class CustomCharacter implements VictoryCondition {
     public FXMLLoader dropdown;
 
     private String name;

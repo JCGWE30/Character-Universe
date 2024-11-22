@@ -5,7 +5,9 @@ import com.lemees.fxgrid.Characters.CustomCharacter;
 import com.lemees.fxgrid.Characters.RandomWalkCharacter;
 import com.lemees.fxgrid.Characters.RegisterCharacter;
 
-@RegisterCharacter(50)
+import java.util.List;
+
+@RegisterCharacter(0)
 public class Spirit extends BountyCharacter {
     private static int counter = 0;
     public Spirit() {
@@ -15,5 +17,12 @@ public class Spirit extends BountyCharacter {
     @Override
     protected boolean canTarget(CustomCharacter c) {
         return !((c instanceof Onryo) || (c instanceof Spirit));
+    }
+
+    @Override
+    public boolean isVictorious(List<CustomCharacter> cs) {
+        return cs.stream()
+                .filter(c->!this.getClass().isInstance(c))
+                .count()==0;
     }
 }
