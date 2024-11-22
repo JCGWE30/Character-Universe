@@ -1,5 +1,10 @@
 package com.lemees.fxgrid;
 
+import com.lemees.fxgrid.Characters.CharacterClasses.Onryo;
+import com.lemees.fxgrid.Characters.CharacterClasses.Spirit;
+import com.lemees.fxgrid.Characters.CharacterLoader;
+import com.lemees.fxgrid.Characters.CustomCharacter;
+import com.lemees.fxgrid.Systems.CharacterSystem;
 import com.lemees.fxgrid.Systems.CoordinateSystem;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -15,8 +20,12 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Time;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HelloApplication extends Application {
     @Override
@@ -33,29 +42,40 @@ public class HelloApplication extends Application {
         // Call the method on the controller
         controller.setGridSize(gridSize);
 
-        //x,y
-        HashMap<Integer,Integer> takenSpots = new HashMap<>();
+        CharacterLoader.loadCharacters();
+        CharacterSystem.initialize();
 
-        Random random = new Random();
+        for(Map.Entry<Class<? extends CustomCharacter>,Integer> clazz : CharacterLoader.characterList.entrySet()){
+            try {
+                for(int i = 0;i<clazz.getValue();i++){
+                    CharacterSystem.spawnCharacter(clazz.getKey().getDeclaredConstructor().newInstance());
+                }
+            } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+                }
+        }
 
-        Stack<Coordinate> pathCoords = CoordinateSystem.getPath(new Coordinate(0,0),new Coordinate(10,11));
+        for(CustomCharacter c:CharacterSystem.getLivingCharacters()){
+            controller.spawnCharacter(c);
+        }
 
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.millis(200),e->{
+                new KeyFrame(Duration.seconds(1),e->{
                     controller.deleteAllTiles();
-                    controller.spawnTile(pathCoords.pop());
-//                    for (int i = 0; i < 100; i++) {
-//                        Map.Entry<Integer, Integer> selectedSpot = null;
-//                        while (takenSpots.entrySet().contains(selectedSpot) || selectedSpot == null) {
-//                            selectedSpot = Map.entry(random.nextInt(gridSize), random.nextInt(gridSize));
-//                        }
-//                        controller.spawnTile(selectedSpot.getKey(), selectedSpot.getValue());
-//                        takenSpots.put(selectedSpot.getKey(), selectedSpot.getValue());
-//                    }
+
+                    for(CustomCharacter c:CharacterSystem.getLivingCharacters()){
+                        c.turnTick();
+                        controller.spawnCharacter(c);
+                    }
+
+                    controller.updateEvents();
+                    controller.updateDropdowns();
                 })
         );
+
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+
 
         // Set up the scene and stage
         Scene scene = new Scene(root, 600, 600);

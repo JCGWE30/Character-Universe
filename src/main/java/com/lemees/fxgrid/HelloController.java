@@ -1,5 +1,7 @@
 package com.lemees.fxgrid;
 
+import com.lemees.fxgrid.Characters.CustomCharacter;
+import com.lemees.fxgrid.Systems.CharacterSystem;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -14,15 +16,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HelloController {
+    private static HelloController instance;
+
     private FXMLLoader hoverPane;
     private GridPane eventGrid;
     private Coordinate lastObservedCoordinate;
+    private List<String> eventLog = new ArrayList<>();
+
     public static int mapSize;
 
     @FXML
@@ -30,15 +34,16 @@ public class HelloController {
     @FXML
     private AnchorPane eventAnchor;
     @FXML
-    private ScrollPane creatureScroll;
+    private VBox creatureScroll;
     @FXML
-    private ScrollPane eventScroll;
+    private VBox eventScroll;
 
     private double cellWidth;
     private double cellHeight;
     private Map<Coordinate, Node> cellValues = new ConcurrentHashMap<>();
 
     public void setGridSize(int size) {
+        instance = this;
 
         mapSize = size;
 
@@ -93,7 +98,6 @@ public class HelloController {
     }
 
     public void spawnTile(int x, int y) {
-
         Image image = new Image(getClass().getResource("/images/testImage.png").toExternalForm());
 
         Coordinate coords = new Coordinate(x, y);
@@ -107,6 +111,26 @@ public class HelloController {
 
         view.setLayoutX(cellWidth*x);
         view.setLayoutY(cellHeight*y);
+
+        eventAnchor.getChildren().add(view);
+
+        cellValues.put(coords, view);
+    }
+
+    public void spawnCharacter(CustomCharacter character){
+        Image image = new Image(getClass().getResource(character.getImage()).toExternalForm());
+
+        Coordinate coords = character.getPosition();
+
+        if (cellValues.containsKey(coords)) return;
+
+        ImageView view = new ImageView(image);
+
+        view.setFitWidth(cellWidth);
+        view.setFitHeight(cellHeight);
+
+        view.setLayoutX(cellWidth*coords.getX());
+        view.setLayoutY(cellHeight*coords.getY());
 
         eventAnchor.getChildren().add(view);
 
@@ -148,6 +172,35 @@ public class HelloController {
         }
     }
 
+    public static void addEventString(String event){
+        instance.eventLog.add(event);
+    }
+
+    public void updateEvents(){
+        eventScroll.getChildren().clear();
+        for(String st:eventLog){
+            Label label = new Label();
+            label.setText(st);
+            eventScroll.getChildren().add(label);
+        }
+    }
+
+    public void updateDropdowns(){
+        creatureScroll.getChildren().clear();
+
+        List<FXMLLoader> panes = CharacterSystem.getCharacters().stream()
+                .sorted(Comparator.comparingInt((c)-> c.isAlive() ? 1000 + c.getKills() : c.getKills()))
+                .map(c->c.dropdown)
+                .toList().reversed();
+
+        for(FXMLLoader pane:panes){
+            AnchorPane root = pane.getRoot();
+            CharacterDropdownProvider prov = pane.getController();
+            prov.updateStats();
+            creatureScroll.getChildren().add(root);
+        }
+    }
+
     public void moveMouse(MouseEvent e) {
         AnchorPane pane = hoverPane.getRoot();
         getHoveredCoordinate(e).ifPresentOrElse(
@@ -156,10 +209,13 @@ public class HelloController {
                     if(c==lastObservedCoordinate) return;
                     lastObservedCoordinate = c;
                     CharacterInfoProvider controler = hoverPane.getController();
-                    controler.setupInfo();
 
-                    int xOffset = e.getSceneX() > 500 ? -110 : 10;
-                    int yOffset = e.getSceneY() > 500 ? -210 : 10;
+                    CustomCharacter character = CharacterSystem.getCharacterOnTile(c);
+
+                    controler.setupInfo(character);
+
+                    int xOffset = e.getSceneX() > 400 ? -110 : 10;
+                    int yOffset = e.getSceneY() > 400 ? -210 : 10;
 
                     pane.setLayoutX(e.getSceneX()+xOffset);
                     pane.setLayoutY(e.getSceneY()+yOffset);

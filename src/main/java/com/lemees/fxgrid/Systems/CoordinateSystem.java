@@ -4,6 +4,7 @@ import com.lemees.fxgrid.Coordinate;
 import com.lemees.fxgrid.HelloController;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CoordinateSystem {
@@ -20,50 +21,51 @@ public class CoordinateSystem {
                 .toArray(Coordinate[]::new);
     }
 
-    public static Stack<Coordinate> getPath(Coordinate start, Coordinate end){
-        Map<Coordinate,Double> gValues = new HashMap<>(); //Distance from the current node to the start
-        Map<Coordinate,Double> hValues = new HashMap<>(); //Distance from the current node to the end
-        Map<Coordinate,Coordinate> cameFrom = new HashMap<>(); //Previous nodes
+    public static Queue<Coordinate> getPath(Coordinate start, Coordinate end, Predicate<Coordinate> obstacleFilter){
+        Map<Coordinate, Integer> steps = new HashMap<>();
+        Map<Coordinate, Double> endDistance = new HashMap<>();
+        Map<Coordinate, Coordinate> cameFrom = new HashMap<>();
 
         PriorityQueue<Coordinate> openSet =
-                new PriorityQueue<>(Comparator.comparingDouble(e->gValues.get(e) + hValues.get(e)));
-        //Sets a priority queue to sort by g and h value, essensially paths closer to the start and end get higher values than further paths
+                new PriorityQueue<>(Comparator.comparingDouble(c->steps.get(c)+endDistance.get(c)));
 
-        gValues.put(start,0.0);
-        hValues.put(start,start.getDistance(end));
-        //Initalizes the g and h values
-
+        steps.put(start,0);
+        endDistance.put(start,start.getDistance(end));
         openSet.add(start);
 
         while(!openSet.isEmpty()){
             Coordinate current = openSet.poll();
 
             if(current.equals(end)){
+                List<Coordinate> path = new LinkedList<>();
+
                 Coordinate cur = end;
-
-                Stack<Coordinate> path = new Stack<>();
-
+                path.add(current);
                 while(cameFrom.containsKey(cur)){
-                    path.push(cameFrom.get(cur));
                     cur = cameFrom.get(cur);
+                    path.add(cur);
                 }
 
-                path.add(cur);
-                return path; //We have hit the end
+                Collections.reverse(path);
+
+                return (Queue<Coordinate>) path;
             }
 
-            Coordinate[] neighbors = getNighbors(current);
-            for(Coordinate neighbor:neighbors){
-                //Gets the neighbors gValue
-                double neighborValue = gValues.get(current)+current.getDistance(neighbor);
+            Coordinate[] neighbors = CoordinateSystem.getNighbors(current);
+            Coordinate[] postProcess = neighbors;
+            if(obstacleFilter!=null){
+                postProcess = Arrays.stream(neighbors)
+                        .filter(obstacleFilter)
+                        .toArray(Coordinate[]::new);
+            }
 
-                //If the neighbor has not yet been visited, or a cheaper path to the neighbor has been found then move to it
-                if(!gValues.containsKey(neighbor) || neighborValue < gValues.get(neighbor)){
+            for(Coordinate neighbor:postProcess){
+                int neighborValue = steps.get(current) + 1;
+
+                if(!steps.containsKey(neighbor) || neighborValue < steps.get(neighbor)){
+                    steps.put(neighbor,neighborValue);
+                    endDistance.put(neighbor,neighbor.getDistance(end));
                     cameFrom.put(neighbor,current);
-                    gValues.put(neighbor,neighborValue);
-                    hValues.put(neighbor,neighbor.getDistance(end));
-
-                    //Every neighbor which we have not yet visited or have a cheaper route are stored
                     openSet.add(neighbor);
                 }
             }
