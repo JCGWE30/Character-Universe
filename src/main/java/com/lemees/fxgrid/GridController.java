@@ -2,12 +2,9 @@ package com.lemees.fxgrid;
 
 import com.lemees.fxgrid.Characters.CustomCharacter;
 import com.lemees.fxgrid.Systems.CharacterSystem;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -15,15 +12,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class HelloController {
-    private static HelloController instance;
+public class GridController {
+    private static GridController instance;
 
     private FXMLLoader hoverPane;
     private GridPane eventGrid;
@@ -64,17 +59,17 @@ public class HelloController {
         if(paused){
             if(isPaused){
                 pauseButton.setText("Pause");
-                HelloApplication.gameSpeed.set(actualSpeed);
+                GridApplication.gameSpeed.set(actualSpeed);
             }else{
                 pauseButton.setText("Play");
-                HelloApplication.gameSpeed.set(0);
+                GridApplication.gameSpeed.set(0);
             }
             isPaused=!isPaused;
             return;
         }
         actualSpeed+=speed;
         actualSpeed = Math.max(1,Math.min(actualSpeed,5));
-        HelloApplication.gameSpeed.set(actualSpeed);
+        GridApplication.gameSpeed.set(actualSpeed);
         speedDisplay.setText("x"+actualSpeed);
     }
 

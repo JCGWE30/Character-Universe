@@ -1,11 +1,10 @@
 package com.lemees.fxgrid.Systems;
 
 import com.lemees.fxgrid.Coordinate;
-import com.lemees.fxgrid.HelloController;
+import com.lemees.fxgrid.GridController;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class CoordinateSystem {
     public static Coordinate[] getNighbors(Coordinate org) {
@@ -74,9 +73,9 @@ public class CoordinateSystem {
     }
 
     public static Coordinate[] getCoordinates(){
-        List<Coordinate> coords = new ArrayList<>((int) Math.pow(HelloController.mapSize,2));
-        for(int i = 0;i<HelloController.mapSize;i++){
-            for(int j = 0;j<HelloController.mapSize;j++){
+        List<Coordinate> coords = new ArrayList<>((int) Math.pow(GridController.mapSize,2));
+        for(int i = 0; i< GridController.mapSize; i++){
+            for(int j = 0; j< GridController.mapSize; j++){
                 coords.add(new Coordinate(i,j));
             }
         }
@@ -84,7 +83,7 @@ public class CoordinateSystem {
     }
 
     private static boolean inBounds(Coordinate coord){
-        int size = HelloController.mapSize;
+        int size = GridController.mapSize;
 
         return coord.getX() < size && coord.getY() < size
                 &&

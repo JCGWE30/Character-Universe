@@ -1,7 +1,6 @@
 package com.lemees.fxgrid.Characters;
 
 import com.lemees.fxgrid.Coordinate;
-import com.lemees.fxgrid.HelloController;
 import com.lemees.fxgrid.Systems.CharacterSystem;
 import com.lemees.fxgrid.Systems.CoordinateSystem;
 

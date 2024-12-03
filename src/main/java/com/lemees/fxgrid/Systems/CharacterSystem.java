@@ -4,8 +4,8 @@ import com.lemees.fxgrid.CharacterDropdownProvider;
 import com.lemees.fxgrid.Characters.CustomCharacter;
 import com.lemees.fxgrid.Characters.VictoryCondition;
 import com.lemees.fxgrid.Coordinate;
-import com.lemees.fxgrid.HelloApplication;
-import com.lemees.fxgrid.HelloController;
+import com.lemees.fxgrid.GridApplication;
+import com.lemees.fxgrid.GridController;
 
 import java.util.*;
 
@@ -65,14 +65,14 @@ public class CharacterSystem {
     }
 
     public static void killCharacter(CustomCharacter customCharacter) {
-        HelloController.addEventString(customCharacter.getName()+" HAS DIED!");
+        GridController.addEventString(customCharacter.getName()+" HAS DIED!");
     }
 
-    public static void checkForVictory(HelloController controller){
+    public static void checkForVictory(GridController controller){
         for(Map.Entry<Class<? extends CustomCharacter>,VictoryCondition> e:instance.condition.entrySet()){
             if(e.getValue().isVictorious(getLivingCharacters())){
-                HelloApplication.gameSpeed.set(0);
-                HelloController.addEventString(e.getKey().getSimpleName()+" Has Won!");
+                GridApplication.gameSpeed.set(0);
+                GridController.addEventString(e.getKey().getSimpleName()+" Has Won!");
                 controller.updateEvents();
                 return;
             }

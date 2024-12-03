@@ -1,12 +1,10 @@
 package com.lemees.fxgrid.Characters;
 
 import com.lemees.fxgrid.Coordinate;
-import com.lemees.fxgrid.HelloController;
+import com.lemees.fxgrid.GridController;
 import com.lemees.fxgrid.Systems.CharacterSystem;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
-
-import java.util.List;
 
 
 public abstract class CustomCharacter implements VictoryCondition {
@@ -57,13 +55,11 @@ public abstract class CustomCharacter implements VictoryCondition {
         return kills;
     }
 
-    public void turnTick(){
-
-    }
+    public abstract void turnTick();
 
     protected void attack(CustomCharacter character){
         character.defend(this,10);
-        HelloController.addEventString(getName()+" Attacks "+character.getName()+" for 10 damage!");
+        GridController.addEventString(getName()+" Attacks "+character.getName()+" for 10 damage!");
         kills++;
     }
 

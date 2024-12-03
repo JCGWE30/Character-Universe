@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<Pane fx:id="encompassPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lemees.fxgrid.HelloController">
+<Pane fx:id="encompassPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lemees.fxgrid.GridController">
    <children>
       <ScrollPane prefHeight="499.0" prefWidth="150.0">
          <content>

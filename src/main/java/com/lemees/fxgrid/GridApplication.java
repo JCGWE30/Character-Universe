@@ -1,46 +1,33 @@
 package com.lemees.fxgrid;
 
-import com.lemees.fxgrid.Characters.CharacterClasses.Onryo;
-import com.lemees.fxgrid.Characters.CharacterClasses.Spirit;
 import com.lemees.fxgrid.Characters.CharacterLoader;
 import com.lemees.fxgrid.Characters.CustomCharacter;
 import com.lemees.fxgrid.Systems.CharacterSystem;
-import com.lemees.fxgrid.Systems.CoordinateSystem;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Time;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class HelloApplication extends Application {
+public class GridApplication extends Application {
     public static IntegerProperty gameSpeed;
     @Override
     public void start(Stage stage) throws IOException {
         // Load the FXML file
-        FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader loader = new FXMLLoader(GridApplication.class.getResource("hello-view.fxml"));
         Parent root = loader.load();
 
         // Get the controller
-        HelloController controller = loader.getController();
+        GridController controller = loader.getController();
 
         int gridSize = 25;
 
