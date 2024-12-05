@@ -21,5 +21,30 @@
             <Font size="10.0" />
          </font>
       </Text>
+      <Text fx:id="characterKills" layoutX="-3.0" layoutY="138.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kills: 0" textAlignment="CENTER" wrappingWidth="106.90156555175781">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Text>
+      <Text fx:id="characterHealth" layoutX="-3.0" layoutY="151.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Health: 100" textAlignment="CENTER" wrappingWidth="106.90156555175781">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Text>
+      <Text fx:id="customField1" layoutX="-3.0" layoutY="164.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CustomField" textAlignment="CENTER" wrappingWidth="106.90156555175781">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Text>
+      <Text fx:id="customField2" layoutX="-3.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CustomField1" textAlignment="CENTER" wrappingWidth="106.90156555175781">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Text>
+      <Text fx:id="customField3" layoutX="-3.0" layoutY="189.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CustomField2" textAlignment="CENTER" wrappingWidth="106.90156555175781">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>
