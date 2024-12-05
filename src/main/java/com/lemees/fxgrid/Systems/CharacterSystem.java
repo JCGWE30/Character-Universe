@@ -15,16 +15,16 @@ public class CharacterSystem {
     List<CustomCharacter> characters;
     HashMap<Class<? extends CustomCharacter>, VictoryCondition> condition = new HashMap<>();
 
-    public static void initialize(){
+    public static void initialize() {
         instance = new CharacterSystem();
         instance.characters = Collections.synchronizedList(new ArrayList<>());
     }
 
-    public static void spawnCharacter(CustomCharacter c){
+    public static void spawnCharacter(CustomCharacter c) {
         Class<? extends CustomCharacter> cz = c.getClass();
 
-        if(!instance.condition.containsKey(cz)){
-            instance.condition.put(cz,c);
+        if (!instance.condition.containsKey(cz)) {
+            instance.condition.put(cz, c);
         }
 
         c.dropdown = CharacterDropdownProvider.getNewDropdown(c);
@@ -34,45 +34,68 @@ public class CharacterSystem {
         Coordinate[] coords = CoordinateSystem.getCoordinates();
 
         coords = Arrays.stream(coords)
-                .filter(cc->!tileOccupied(cc))
+                .filter(cc -> !tileOccupied(cc))
                 .toArray(Coordinate[]::new);
 
         Random random = new Random();
         Coordinate coord = coords[random.nextInt(coords.length)];
+        c.initGoals();
         c.move(coord);
     }
 
-    public static boolean tileOccupied(Coordinate c){
+    /**
+     * Checks if a character is on a tile
+     *
+     * @param c The tile to check
+     * @return if its occupied
+     */
+    public static boolean tileOccupied(Coordinate c) {
         return !getLivingCharacters().stream()
                 .filter(ch -> ch.getPosition().equals(c))
                 .toList().isEmpty();
     }
 
-    public static List<CustomCharacter> getLivingCharacters(){
+    /**
+     * Gets all characters that are alive
+     *
+     * @return living characters
+     */
+    public static List<CustomCharacter> getLivingCharacters() {
         return instance.characters.stream()
                 .filter(CustomCharacter::isAlive)
                 .toList();
     }
 
-    public static List<CustomCharacter> getCharacters(){
+    /**
+     * Gets all characters, regardless if their alive
+     *
+     * @return all characters
+     */
+    public static List<CustomCharacter> getCharacters() {
         return new ArrayList<>(instance.characters);
     }
 
-    public static CustomCharacter getCharacterOnTile(Coordinate c){
+    /**
+     * Gets the character on a selected tile
+     *
+     * @param c The tile to check
+     * @return The character on a tile, null otherwise
+     */
+    public static CustomCharacter getCharacterOnTile(Coordinate c) {
         return getLivingCharacters().stream()
-                .filter(ch->ch.getPosition().equals(c))
+                .filter(ch -> ch.getPosition().equals(c))
                 .findFirst().orElse(null);
     }
 
     public static void killCharacter(CustomCharacter customCharacter) {
-        GridController.addEventString(customCharacter.getName()+" HAS DIED!");
+        GridController.addEventString(customCharacter.getName() + " HAS DIED!");
     }
 
-    public static void checkForVictory(GridController controller){
-        for(Map.Entry<Class<? extends CustomCharacter>,VictoryCondition> e:instance.condition.entrySet()){
-            if(e.getValue().isVictorious(getLivingCharacters())){
+    public static void checkForVictory(GridController controller) {
+        for (Map.Entry<Class<? extends CustomCharacter>, VictoryCondition> e : instance.condition.entrySet()) {
+            if (e.getValue().isVictorious(getLivingCharacters())) {
                 GridApplication.gameSpeed.set(0);
-                GridController.addEventString(e.getKey().getSimpleName()+" Has Won!");
+                GridController.addEventString(e.getKey().getSimpleName() + " Has Won!");
                 controller.updateEvents();
                 return;
             }
